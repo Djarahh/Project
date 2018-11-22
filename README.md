@@ -1,6 +1,9 @@
 # Project
 120 years of Olympic history: athletes and results
 
+Name: Yara Djaidoen
+Student Number: 11123117
+
 ## Problem:
 As I am very fond of sports and I could not find a complete representation of
 the statistics/developments/corralations made in the olympic games, I wanted to
@@ -46,4 +49,4 @@ This is a [link](tohttp://rio2016.thegamma.net/) to a site that has part of the 
 
 ### Hardest parts:
 I think the hardest part of this problem is to represent the right data at the right moments,
-and to have a clear overview of all data so it will be user friendly. 
+and to have a clear overview of all data so it will be user friendly.
