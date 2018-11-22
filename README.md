@@ -34,12 +34,12 @@ This are the parts of your project may be optional to implement or “nice to ha
 
 ## Prerequisites:
 ### Data sources:
-Data source athletes participation history:
-* [link to data athletes history](https://www.kaggle.com/heesoo37/120-years-of-olympic-history-athletes-and-results)
-Data source on population per country per year:
-* [link to data world population](https://data.worldbank.org/indicator/SP.POP.TOTL)
-Data source on GDP development per country per year:
-* [link to data GDP per country](https://data.worldbank.org/indicator/NY.GDP.PCAP.CD)
+* Data source athletes participation history:
+[link to data athletes history](https://www.kaggle.com/heesoo37/120-years-of-olympic-history-athletes-and-results)
+* Data source on population per country per year:
+[link to data world population](https://data.worldbank.org/indicator/SP.POP.TOTL)
+* Data source on GDP development per country per year:
+[link to data GDP per country](https://data.worldbank.org/indicator/NY.GDP.PCAP.CD)
 
 ### External components:
 I do not know about what libraries I want to use yet, even what D3 can provide in the visualization I am going make.
