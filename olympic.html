@@ -10,19 +10,34 @@ Student Number: 11123117 -->
         <script src="https://unpkg.com/d3-simple-slider/build/d3-simple-slider.js"></script>
         <script src="http://d3js.org/topojson.v1.min.js"></script>
         <script type="text/javascript" src="d3-tooltip.js"></script>
+
+        <!-- Bootstrap -->
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <!-- jQuery library -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <!-- Latest compiled JavaScript -->
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
         <link rel="stylesheet" href="olympic.css"></>
         <script type="text/javascript" src="olympic.js"></script>
-  </head>
-  <body>
-    <div class="container">
-      <h2>Time</h2>
-        <div class="row align-items-center">
-          <div class="col-sm-2"><p id="value-time"></p></div>
-          <div class="col-sm"><div id="slider-time"></div></div>
+
+    </head>
+      <body>
+        <h2>Map of the olympic games</h2>
+        <p>Select a year and you will see what the amount of medals that were won in that particular year.</p>
+          <div class="row">
+            <div class="col-sm-12" id="slider-time"></div>
+          </div>
+
+        <div class="row1">
+          <div class="col-sm-4" id="sunburst">sunburst</div>
+          <div class="col-sm-6" id="steamgraph">steamgraph</div>
         </div>
-    </div>
-    <h1 id="t"></h1>
-    <p id="h"></p>
-    <p> <a href="http://bl.ocks.org/micahstubbs/8e15870eb432a21f0bc4d3d527b2d14f">Source Worldmap</a></p>
-  </body>
-</html>
+
+        <h1 id="t"></h1>
+          <p id="h"></p>
+          <p> <a href="http://bl.ocks.org/micahstubbs/8e15870eb432a21f0bc4d3d527b2d14f">Source Worldmap</a></p>
+      </body>
+  </html>

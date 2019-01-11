@@ -5,15 +5,22 @@ import pandas as pd
 INPUT_CSV = "athlete_events.csv"
 OUTPUT_JSON = "summer.json"
 
-# Reading only Date, sex, age, from CSV
-df = pd.read_csv(INPUT_CSV, usecols=["ID", "Sex", "Age",
+# Reading only usable columns from CSV
+df = pd.read_csv(INPUT_CSV, usecols=["ID", "Sex", "Age", "Year",
                                      "Team", "NOC", "Season",
                                      "Sport", "Event",
                                      "Medal"], na_values=[''])
 
-# Changing data to make it usable
+# Selecting only the rows needed
 df_gold = df.loc[df["Medal"].isin(["Gold", "Silver", "Bronze"])]
 df_summer = df_gold.loc[df["Season"] == "Summer"]
 
+df_sort = df_summer.stack().reset_index().set_index(["Year",
+                                                                    "Team",
+                                                                    "Medal",
+                                                                    "Event",
+                                                                    "Athlete"]).sort_index()
+
+print(df_sort)
 # Convert all data to JSON file
-df_summer.to_json(OUTPUT_JSON, orient="index")
+# df_summer.to_json(OUTPUT_JSON, orient="index")
