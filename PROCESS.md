@@ -11,4 +11,7 @@ I asked a question on how to format my nested json file and I have finally figue
 
 
 # Day 5 (Monday 14-11-2019)
-Today I will fix the legend and the colour of the boundries in the map. Also a legend will be made. Furthermore I would like to have the interactivity of the slider and the worldmap fixedd. Then I will start working on the sunburst. 
+Today I will fix the legend and the colour of the boundries in the map. Also a legend will be made. Furthermore I would like to have the interactivity of the slider and the worldmap fixedd. Then I will start working on the sunburst. The following site gives a step by step tutorial to draw a sunburst. (https://bl.ocks.org/denjn5/e1cdbbe586ac31747b4a304f8f86efa5)
+I fixed the world map transitions in combination with the slider. I have had some difficulties with the data that was represented in the map (tooltip did not show the data I had selected with the silder, only the initial data I loaded into the function). Now I will start on the sunburst.
+The sunburst tutorial is helping understand the way I should programm the graph, however I found out that I should reformat my data again --> The data should be formatted as follows:
+A list of dictionaries that each have a name. So there should be a list medal dictionaries, that contains a list of sports dictionaries, containing a dictionary of athletes. I just do not know how I should be implementing this yet. At this point I have a dictionary of medals, with a dictionary of sports, with a list of sporters and events.

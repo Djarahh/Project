@@ -5,7 +5,7 @@ window.onload = function() {
 
   console.log('Yes, you can!')
 };
-
+dimentions = {}
 var requests = [d3.json("../data/worlddata.json"),
                 d3.json("../data/pretty_json.json"),
                 d3.json("../data/centroids.json")];
@@ -70,6 +70,7 @@ function drawWorldMap(dataWorld, olympic, year){
                 }
 
               })
+  dimentions.tip = tip
 
   // Define margins and a canvas
   var margin = {top: 0, right: 0, bottom: 0, left: 0},
@@ -134,7 +135,7 @@ function drawWorldMap(dataWorld, olympic, year){
             .style("stroke-width",0.3);
         })
         .on("click", function(d){
-          drawSunburst()
+          drawSunburst(olympic, d.properties.name, year)
         });
 
   svg.call(tip)
@@ -159,8 +160,18 @@ function updateWorldMap(olympic, year){
         }
       }
     })
-  }
 
+  // Get the tooltip from the function drawWorldMap
+  tip = dimentions.tip
+  tip.html(function (d) {
+    if (typeof olympic[year][d.properties.name]=== 'undefined'){
+      return "<strong>Country: </strong><span class='details'>" + d.properties.name + "<br></span><strong>Total Medals: </strong><span class='details'> No data <br></span>"
+    }
+    else{
+      return "<strong>Country: </strong><span class='details'>" + d.properties.name + "<br></span><strong>Total Medals: </strong><span class='details'>" + olympic[year][d.properties.name]["Total"] + "<br></span>";
+    }
+  })
+  }
 
 function createLegend(c, svg, height, width){
   var colorDomain = [0, 50, 100, 150, 200, 250]
@@ -192,7 +203,9 @@ function createLegend(c, svg, height, width){
 }
 
 
-function drawSunburst(){
+function drawSunburst(olympic, country, year){
+  // console.log(olympic)
+  console.log(olympic[year][country])
   // Define a new variables for the sunburstSVG
   var width = 500;
   var height = 500;
@@ -204,7 +217,34 @@ function drawSunburst(){
     .attr('width', width)
     .attr('height', height)
     .append('g')
-    .attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')');  // <-- 4
+    .attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')');
+
+  // Tool that helps organize data into sunburst (all 360degrees are used)
+  var partition = d3.partition()
+                    .size([2 * Math.PI, radius]);
+
+  // Find the first node in the data
+  var root = d3.hierarchy(olympic[year][country])
+               .sum(function (d) {
+                 console.log(d["Medal"].length)
+                 return d.size});
+
+ // // Size arcs
+ //  partition(root);
+ //  var arc = d3.arc()
+ //      .startAngle(function (d) { return d.x0 })
+ //      .endAngle(function (d) { return d.x1 })
+ //      .innerRadius(function (d) { return d.y0 })
+ //      .outerRadius(function (d) { return d.y1 });
+ //
+ //  // Put it all together
+ //  g.selectAll('path')
+ //      .data(root.descendants())
+ //      .enter().append('path')
+ //      .attr("display", function (d) { return d.depth ? null : "none"; })
+ //      .attr("d", arc)
+ //      .style('stroke', '#fff')
+ //      .style("fill", function (d) { return color((d.children ? d : d.parent).data.name); });
 }
 
 function drawSteamgraph(){
