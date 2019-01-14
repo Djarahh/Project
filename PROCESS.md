@@ -6,3 +6,5 @@ I talked to a TA and we figuered that I should change the format of my data the 
 I was absent This day due to illness, I did not do anything.
 
 # Day 4 (Friday 11-1-2019)
+Today I am going to work on my dataset so I can work with it more easy. After half a day of struggeling I Have finally put my JSON file into the right format in the order of Year -> Countries -> Medals -> Sports and Athletes. Now I am going to make the world map that that is colour dependent on the amount of medals won in a year. I am going to use the year 2016 as reference as it was the year with the most sports and therefore medals won. Furthermore, I have changed my plan to use a map instead of a bubble map (as I forsee lots of difficulties with them).
+I asked a question on how to format my nested json file and I have finally figuered out how. I now have a map with colours and the data in each country how many medals there are. After I put in a legend I can now continue with the next visualisations.

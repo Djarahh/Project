@@ -1,26 +1,36 @@
 import pandas as pd
-
+import csv
+from collections import defaultdict
+import pprint
+import json as jsonner
+print = pprint.pprint
 # source of dataset:(https://www.kaggle.com/heesoo37/120-years-of-olympic-history-athletes-and-results)
 
 INPUT_CSV = "athlete_events.csv"
 OUTPUT_JSON = "summer.json"
 
-# Reading only usable columns from CSV
-df = pd.read_csv(INPUT_CSV, usecols=["ID", "Sex", "Age", "Year",
-                                     "Team", "NOC", "Season",
-                                     "Sport", "Event",
-                                     "Medal"], na_values=[''])
+with open(INPUT_CSV, 'r') as input_file:
+    json = defaultdict(dict)
+    lines = csv.reader(input_file)
+    next(lines)
+    for line in lines:
+        json[line[9]][line[6].split('-')[0]] = {'Medal': {'Gold': [],
+                                                          'Silver': [],
+                                                          'Bronze': [],
+                                                          },
+                                                'Total': 0
+                                                }
+    input_file.seek(0)
+    next(lines)
+    for line in lines:
+        medal = line[14]
+        sport = (line[12], line[13], (line[1]))
+        if medal == "NA":
+            continue
+        json[line[9]][line[6].split('-')[0]]['Medal'][medal].append(sport)
+        json[line[9]][line[6].split('-')[0]]['Total'] = json[line[9]][line[6].split('-')[0]]['Total'] + 1
 
-# Selecting only the rows needed
-df_gold = df.loc[df["Medal"].isin(["Gold", "Silver", "Bronze"])]
-df_summer = df_gold.loc[df["Season"] == "Summer"]
 
-df_sort = df_summer.stack().reset_index().set_index(["Year",
-                                                                    "Team",
-                                                                    "Medal",
-                                                                    "Event",
-                                                                    "Athlete"]).sort_index()
-
-print(df_sort)
-# Convert all data to JSON file
-# df_summer.to_json(OUTPUT_JSON, orient="index")
+print(json['1920']['Finland']['Total'])
+with open("pretty_json.json", 'w') as output_file:
+    jsonner.dump(json, output_file, indent=2)

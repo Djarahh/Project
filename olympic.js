@@ -7,14 +7,13 @@ window.onload = function() {
 };
 
 var requests = [d3.json("../data/worlddata.json"),
-                d3.json("../data/summer.json"),
+                d3.json("../data/pretty_json.json"),
                 d3.json("../data/centroids.json")];
 
 Promise.all(requests).then(function(response) {
     console.log(response[0])
     var slider = makeSlider()
-    var drawWorld = drawWorldMap(response[0])
-    // var drawCentoids = drawCentoids(response[2])
+    var drawWorld = drawWorldMap(response[0], response[1], slider)
     var drawSteam = drawSteamgraph()
 
 })
@@ -49,18 +48,18 @@ function makeSlider(){
     .attr('transform', 'translate(30,30)');
 
   gTime.call(sliderTime);
+  return d3.timeFormat("%Y")(sliderTime.value())
 
-  // d3.select('p#value-time').text(d3.timeFormat('%Y')(sliderTime.value()));
 }
 
-function drawWorldMap(dataWorld){
+function drawWorldMap(dataWorld, olympic, year){
 
   // Set tooltips
   var tip = d3.tip()
               .attr('class', 'd3-tip')
               .offset([0, 0])
               .html(function(d) {
-                return "<strong>Country: </strong><span class='details'>" + d.properties.name + "<br></span>";
+                return "<strong>Country: </strong><span class='details'>" + d.properties.name + "<br></span><strong>Total Medals: </strong><span class='details'>" + olympic[year][d.properties.name]["Total"] + "<br></span>";
               })
 
   // Define margins and a canvas
@@ -69,10 +68,8 @@ function drawWorldMap(dataWorld){
               height = 500 - margin.top - margin.bottom;
 
   // Create list with all values and define and scale colors
-  // obesityValues = d3.set(obesity.map(function(d)
-  //                 {return d.Obesity_Among_Adults})).values();
-  // c = d3.scaleLinear().domain([Math.min(...obesityValues), Math.max(...obesityValues)]).range([255, 0])
-
+  medalMax = olympic[year]["United States"]["Total"]
+  c = d3.scaleSequential(d3.interpolateGreens).domain([medalMax, 0])
 
   // Create a SVG canvas
   var svg = d3.select("div#slider-time")
@@ -96,16 +93,16 @@ function drawWorldMap(dataWorld){
       .data(dataWorld.features)
       .enter().append("path")
       .attr("d", path)
-      // .style("fill", function(d, i) {
-      //     for (var i = 0; i < obesity.length; i++){
-      //       if (d.id == obesity[i].Code){
-      //         // return "rgb(0, 0, " + c(obesity[i].Obesity_Among_Adults) + ")"
-      //         return "rgb(0,0,0)"
-      //       }
-      //     }
-      //     return "rgb(220, 220, 220)"
-      // })
-      .style('stroke', 'white')
+      .style("fill", function(d, i){
+        string = Object.keys(olympic[year])
+        for (var i = 0; i < string.length; i++){
+          if (d.properties.name == string[i]){
+            return c(olympic[year][string[i]]["Total"])
+
+          }
+        }
+      })
+      .style('stroke', 'grey')
       .style('stroke-width', 1.5)
       .style("opacity",0.8)
       // tooltips
