@@ -11,20 +11,20 @@ var requests = [d3.json("../data/worlddata.json"),
                 d3.json("../data/centroids.json")];
 
 Promise.all(requests).then(function(response) {
-    console.log(response[0])
-    var slider = makeSlider()
+    // console.log(response[0])
+    var slider = makeSlider(response[1], response[0])
     var drawWorld = drawWorldMap(response[0], response[1], slider)
     var drawSteam = drawSteamgraph()
 
 })
 
-function makeSlider(){
-  // Time
+function makeSlider(olympic, world){
+  // Draws the slider on the left side of the page
   var dataTime = d3.range(0, 31).map(function(d) {
     return new Date(2016 - 4*d, 10, 3);
   });
 
-
+  // Draws and updates the silder
   var sliderTime = d3
     .sliderRight()
     .min(d3.min(dataTime))
@@ -34,11 +34,11 @@ function makeSlider(){
     .tickFormat(d3.timeFormat('%Y'))
     .tickValues(dataTime)
     .default(new Date(2016, 10, 3))
-    // .on('onchange', val => {
-    //   d3.select('p#value-time')
-    //     .text(d3.timeFormat('%Y')(val));
-    //    });
+    .on('onchange', val => {
+      updateWorldMap(olympic, d3.timeFormat("%Y")(val))
+       });
 
+  // Creates a svg in the vertical direction
   var gTime = d3
     .select('div#slider-time')
     .append('svg')
@@ -47,7 +47,10 @@ function makeSlider(){
     .append('g')
     .attr('transform', 'translate(30,30)');
 
+  // Cals the function to create svg and the slider
   gTime.call(sliderTime);
+
+  // Returns the value of the selected year
   return d3.timeFormat("%Y")(sliderTime.value())
 
 }
@@ -59,7 +62,13 @@ function drawWorldMap(dataWorld, olympic, year){
               .attr('class', 'd3-tip')
               .offset([0, 0])
               .html(function(d) {
-                return "<strong>Country: </strong><span class='details'>" + d.properties.name + "<br></span><strong>Total Medals: </strong><span class='details'>" + olympic[year][d.properties.name]["Total"] + "<br></span>";
+                if (typeof olympic[year][d.properties.name]=== 'undefined'){
+                  return "<strong>Country: </strong><span class='details'>" + d.properties.name + "<br></span><strong>Total Medals: </strong><span class='details'> No data <br></span>"
+                }
+                else{
+                  return "<strong>Country: </strong><span class='details'>" + d.properties.name + "<br></span><strong>Total Medals: </strong><span class='details'>" + olympic[year][d.properties.name]["Total"] + "<br></span>";
+                }
+
               })
 
   // Define margins and a canvas
@@ -69,7 +78,7 @@ function drawWorldMap(dataWorld, olympic, year){
 
   // Create list with all values and define and scale colors
   medalMax = olympic[year]["United States"]["Total"]
-  c = d3.scaleSequential(d3.interpolateGreens).domain([medalMax, 0])
+  c = d3.scaleSequential(d3.interpolateYlGn).domain([medalMax, 0])
 
   // Create a SVG canvas
   var svg = d3.select("div#slider-time")
@@ -84,14 +93,14 @@ function drawWorldMap(dataWorld, olympic, year){
                     .translate( [width / 2, height / 1.5]);
 
   var path = d3.geoPath().projection(projection);
-  // createLegend(c, svg, height)
+  createLegend(c, svg, height, width)
 
-  // Draws the countries with colours according to their obesity
+  // Draws the countries with colours according to their amount of medals won
   svg.append("g")
-      .attr("class", "countries")
       .selectAll("path")
       .data(dataWorld.features)
       .enter().append("path")
+      .attr("class", "countries")
       .attr("d", path)
       .style("fill", function(d, i){
         string = Object.keys(olympic[year])
@@ -102,7 +111,7 @@ function drawWorldMap(dataWorld, olympic, year){
           }
         }
       })
-      .style('stroke', 'grey')
+      .style('stroke', 'white')
       .style('stroke-width', 1.5)
       .style("opacity",0.8)
       // tooltips
@@ -124,30 +133,78 @@ function drawWorldMap(dataWorld, olympic, year){
             .style("stroke","white")
             .style("stroke-width",0.3);
         })
-        // .on("click", function(d){
-        //   updateGraph(rawObesity, d.id)
-        // });
+        .on("click", function(d){
+          drawSunburst()
+        });
 
   svg.call(tip)
 }
 
-function drawCentoids(topojson){
-  // Define margins and a canvas
-  var margin = {top: 0, right: 0, bottom: 0, left: 0},
-              width = 960 - margin.left - margin.right,
-              height = 500 - margin.top - margin.bottom;
+function updateWorldMap(olympic, year){
+  // updates the world graph. If a year is selected where there were no olympic
+  // games the map turns black.
+  d3.selectAll(".countries")
+    .transition(100)
+    .style("fill", "black")
+    .style("fill", function(d){
+      if (year == "1916" || year == "1940" || year == "1944"){
+        return "black"
+      }
+      else{
+      string = Object.keys(olympic[year])
+      for (var j = 0; j < string.length; j++){
+        if (d.properties.name == string[j]){
+          return c(olympic[year][string[j]]["Total"])
+          }
+        }
+      }
+    })
+  }
 
-  svg = d3.select("div#slider-time")
-          .append("svg")
-          .attr("width", width)
-          .attr("height", height)
-          .append('g')
-          .attr('class', 'map');
 
+function createLegend(c, svg, height, width){
+  var colorDomain = [0, 50, 100, 150, 200, 250]
+  var legendLabels = ["<50", "50+", "100+", "150+", "200+", ">200"]
+
+
+  var legend = svg.selectAll("g.legend")
+                  .data(colorDomain)
+                  .enter().append("g")
+                  .attr("class", "legend");
+
+  var ls_w = 15, ls_h = 15;
+
+  legend.append("rect")
+        // .attr("x", function(d, i){ return width - (i*ls_h) - 2*ls_h);})
+        .attr("x", width - 20)
+        .attr("y", function(d, i){ return height - (i*ls_h) - 2*ls_h;})
+        .attr("width", ls_w)
+        .attr("height", ls_h)
+        .style("fill", function(d) { return c(d); })
+        .style("opacity", 0.8);
+
+  legend.append("text")
+        .attr("x", width - 22)
+        .attr("y", function(d, i){ return height - (i*ls_h) - ls_h - 4;})
+        .attr("font-size", "10px")
+        .attr("text-anchor", "end")
+        .text(function(d, i){ return legendLabels[i]; });
 }
 
-function drawSunburst(){
 
+function drawSunburst(){
+  // Define a new variables for the sunburstSVG
+  var width = 500;
+  var height = 500;
+  var radius = Math.min(width, height) / 2;
+  var color = d3.scaleOrdinal(d3.schemeCategory20b);
+
+  // Set the SVG workspace
+  var g = d3.select('div#sunburst')
+    .attr('width', width)
+    .attr('height', height)
+    .append('g')
+    .attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')');  // <-- 4
 }
 
 function drawSteamgraph(){
