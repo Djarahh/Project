@@ -15,3 +15,6 @@ Today I will fix the legend and the colour of the boundries in the map. Also a l
 I fixed the world map transitions in combination with the slider. I have had some difficulties with the data that was represented in the map (tooltip did not show the data I had selected with the silder, only the initial data I loaded into the function). Now I will start on the sunburst.
 The sunburst tutorial is helping understand the way I should programm the graph, however I found out that I should reformat my data again --> The data should be formatted as follows:
 A list of dictionaries that each have a name. So there should be a list medal dictionaries, that contains a list of sports dictionaries, containing a dictionary of athletes. I just do not know how I should be implementing this yet. At this point I have a dictionary of medals, with a dictionary of sports, with a list of sporters and events.
+
+# Day 6 (Tuesday 15-11-2019)
+Today I am trying to format my data into the right format for the sunburst. So far I have not been able to do it.

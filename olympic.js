@@ -173,6 +173,7 @@ function updateWorldMap(olympic, year){
   })
   }
 
+
 function createLegend(c, svg, height, width){
   var colorDomain = [0, 50, 100, 150, 200, 250]
   var legendLabels = ["<50", "50+", "100+", "150+", "200+", ">200"]
@@ -226,25 +227,24 @@ function drawSunburst(olympic, country, year){
   // Find the first node in the data
   var root = d3.hierarchy(olympic[year][country])
                .sum(function (d) {
-                 console.log(d["Medal"].length)
                  return d.size});
 
- // // Size arcs
- //  partition(root);
- //  var arc = d3.arc()
- //      .startAngle(function (d) { return d.x0 })
- //      .endAngle(function (d) { return d.x1 })
- //      .innerRadius(function (d) { return d.y0 })
- //      .outerRadius(function (d) { return d.y1 });
- //
- //  // Put it all together
- //  g.selectAll('path')
- //      .data(root.descendants())
- //      .enter().append('path')
- //      .attr("display", function (d) { return d.depth ? null : "none"; })
- //      .attr("d", arc)
- //      .style('stroke', '#fff')
- //      .style("fill", function (d) { return color((d.children ? d : d.parent).data.name); });
+ // Size arcs
+  partition(root);
+  var arc = d3.arc()
+      .startAngle(function (d) { return d.x0 })
+      .endAngle(function (d) { return d.x1 })
+      .innerRadius(function (d) { return d.y0 })
+      .outerRadius(function (d) { return d.y1 });
+
+  // Put it all together
+  g.selectAll('path')
+      .data(root.descendants())
+      .enter().append('path')
+      .attr("display", function (d) { return d.depth ? null : "none"; })
+      .attr("d", arc)
+      .style('stroke', '#fff')
+      .style("fill", function (d) { return color((d.children ? d : d.parent).data.name); });
 }
 
 function drawSteamgraph(){

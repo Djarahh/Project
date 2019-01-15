@@ -13,27 +13,55 @@ with open(INPUT_CSV, 'r') as input_file:
     lines = csv.reader(input_file)
     next(lines)
     for line in lines:
-        json[line[9]][line[6].split('-')[0]] = {'Medal': {'Gold': {},
-                                                          'Silver': {},
-                                                          'Bronze': {},
-                                                          },
+        json[line[9]][line[6].split('-')[0]] = {"name": 'Medals',
+                                                "children": [{"name": 'Gold', "size": 0},
+                                                             {"name": 'Silver', "size": 0},
+                                                             {"name": 'Bronze', "size": 0},
+                                                             ],
                                                 'Total': 0
                                                 }
     input_file.seek(0)
     next(lines)
     for line in lines:
         medal = line[14]
+        if medal == "Gold":
+            number = 0
+        elif medal == "Silver":
+            number = 1
+        elif medal == "Bronze":
+            number = 2
+
+        year = line[9]
+        country = line[6].split('-')[0]
         sport = line[12]
-        athlete = (line[1], line[13])
+        athlete = {"name": line[1], "event": line[13], "size": 1}
         # event = line[13]
         if medal == "NA":
             continue
-        if sport not in json[line[9]][line[6].split('-')[0]]['Medal'][medal]:
-            json[line[9]][line[6].split('-')[0]]['Medal'][medal][sport] = []
-        json[line[9]][line[6].split('-')[0]]['Medal'][medal][sport].append(athlete)
-        json[line[9]][line[6].split('-')[0]]['Total'] = json[line[9]][line[6].split('-')[0]]['Total'] + 1
+
+        if "children" not in json[year][country]['children'][number]:
+            del json[year][country]['children'][number]["size"]
+            json[year][country]['children'][number]["children"] = []
+
+        if len(json[year][country]['children'][number]["children"]) == 0:
+            json[year][country]['children'][number]["children"].append({"name": sport, "children": []})
+            json[year][country]["children"][number]["children"][0]["children"].append(athlete)
+        else:
+            list = []
+            for i in (json[year][country]['children'][number]["children"]):
+                list.append(i["name"])
+            if sport not in list:
+                json[year][country]['children'][number]["children"].append({"name": sport, "children": []})
+                list.append(sport)
+            # print(list)
+            count = list.index(sport)
+            json[year][country]["children"][number]["children"][count]["children"].append(athlete)
+            # break
+    #     json[year][country]['Medal'][medal][sport] = []
+        # json[year][country]['Medal'][medal][sport].append(athlete)
+        json[year][country]['Total'] = json[year][country]['Total'] + 1
 
 
-print(json['1920']['Finland']['Medal'])
+print(json['1900']['Russia']['children'])
 with open("pretty_json.json", 'w') as output_file:
     jsonner.dump(json, output_file, indent=2)
