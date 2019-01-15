@@ -17,4 +17,5 @@ The sunburst tutorial is helping understand the way I should programm the graph,
 A list of dictionaries that each have a name. So there should be a list medal dictionaries, that contains a list of sports dictionaries, containing a dictionary of athletes. I just do not know how I should be implementing this yet. At this point I have a dictionary of medals, with a dictionary of sports, with a list of sporters and events.
 
 # Day 6 (Tuesday 15-11-2019)
-Today I am trying to format my data into the right format for the sunburst. So far I have not been able to do it.
+Today I am trying to format my data into the right format for the sunburst. And I have finally managed to create a dictionary in a list in a list of dictionaries etc. It was then pretty easy to create a sunburst with the data in the right format. However, the colours are not yet applicable. Also, the chart doesn't update yet, it creates a new sunburst with every click on a country. I dont know if I can make the sunburst appear and update afterwards, as it does't exist in the initial page. This is a question I will ask tomorrow. I have figuered out how to give certain colors to a specific catagory.
+Today I also found out that for the years in which there is no data available (such as 1940 due to the world war), there are still errors coming up. This is something that I will fix tomorrow.

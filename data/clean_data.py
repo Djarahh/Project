@@ -14,9 +14,9 @@ with open(INPUT_CSV, 'r') as input_file:
     next(lines)
     for line in lines:
         json[line[9]][line[6].split('-')[0]] = {"name": 'Medals',
-                                                "children": [{"name": 'Gold', "size": 0},
-                                                             {"name": 'Silver', "size": 0},
-                                                             {"name": 'Bronze', "size": 0},
+                                                "children": [{"name": 'Gold', "value": 0},
+                                                             {"name": 'Silver', "value": 0},
+                                                             {"name": 'Bronze', "value": 0},
                                                              ],
                                                 'Total': 0
                                                 }
@@ -34,13 +34,13 @@ with open(INPUT_CSV, 'r') as input_file:
         year = line[9]
         country = line[6].split('-')[0]
         sport = line[12]
-        athlete = {"name": line[1], "event": line[13], "size": 1}
+        athlete = {"name": line[1], "event": line[13], "value": 1}
         # event = line[13]
         if medal == "NA":
             continue
 
         if "children" not in json[year][country]['children'][number]:
-            del json[year][country]['children'][number]["size"]
+            del json[year][country]['children'][number]["value"]
             json[year][country]['children'][number]["children"] = []
 
         if len(json[year][country]['children'][number]["children"]) == 0:

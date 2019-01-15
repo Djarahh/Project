@@ -11,7 +11,7 @@ var requests = [d3.json("../data/worlddata.json"),
                 d3.json("../data/centroids.json")];
 
 Promise.all(requests).then(function(response) {
-    // console.log(response[0])
+    console.log(response[1])
     var slider = makeSlider(response[1], response[0])
     var drawWorld = drawWorldMap(response[0], response[1], slider)
     var drawSteam = drawSteamgraph()
@@ -205,29 +205,31 @@ function createLegend(c, svg, height, width){
 
 
 function drawSunburst(olympic, country, year){
-  // console.log(olympic)
-  console.log(olympic[year][country])
+  data = olympic[year][country]
+
   // Define a new variables for the sunburstSVG
-  var width = 500;
-  var height = 500;
+  var width = 300;
+  var height = 300;
   var radius = Math.min(width, height) / 2;
-  var color = d3.scaleOrdinal(d3.schemeCategory20b);
+  var color = d3.scaleSequential(d3.interpolateYlOrRd).domain([data["Total"], 0]);
+  console.log(color(0))
 
   // Set the SVG workspace
   var g = d3.select('div#sunburst')
-    .attr('width', width)
-    .attr('height', height)
-    .append('g')
-    .attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')');
+            .append("svg")
+            .attr('width', width)
+            .attr('height', height)
+            .append('g')
+            .attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')');
 
   // Tool that helps organize data into sunburst (all 360degrees are used)
   var partition = d3.partition()
                     .size([2 * Math.PI, radius]);
 
   // Find the first node in the data
-  var root = d3.hierarchy(olympic[year][country])
+  var root = d3.hierarchy(data)
                .sum(function (d) {
-                 return d.size});
+                 return d.value});
 
  // Size arcs
   partition(root);
@@ -244,7 +246,23 @@ function drawSunburst(olympic, country, year){
       .attr("display", function (d) { return d.depth ? null : "none"; })
       .attr("d", arc)
       .style('stroke', '#fff')
-      .style("fill", function (d) { return color((d.children ? d : d.parent).data.name); });
+      .style("fill", function (d) {
+        if (d.depth === 1){
+          if (d.data.name == "Silver"){
+            return "blue"
+          }
+          else if (d.data.name == "Gold"){
+            return "yellow"
+          }
+          else if (d.data.name == "Bronze"){
+            return "brown"
+          }
+        }
+        return color((d.children ? d : d.parent).data.value); })
+      .on("click", function(d){
+        console.log(d)
+      })
+
 }
 
 function drawSteamgraph(){
