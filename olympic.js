@@ -14,7 +14,7 @@ Promise.all(requests).then(function(response) {
     console.log(response[1])
     var slider = makeSlider(response[1], response[0])
     var drawWorld = drawWorldMap(response[0], response[1], slider)
-    var drawSteam = drawSteamgraph()
+    // var drawSteam = drawSteamgraph()
 
 })
 
@@ -135,6 +135,7 @@ function drawWorldMap(dataWorld, olympic, year){
             .style("stroke-width",0.3);
         })
         .on("click", function(d){
+
           drawSunburst(olympic, d.properties.name, year)
         });
 
@@ -207,12 +208,16 @@ function createLegend(c, svg, height, width){
 function drawSunburst(olympic, country, year){
   data = olympic[year][country]
 
+
+
+
   // Define a new variables for the sunburstSVG
   var width = 300;
   var height = 300;
   var radius = Math.min(width, height) / 2;
   var color = d3.scaleSequential(d3.interpolateYlOrRd).domain([data["Total"], 0]);
-  console.log(color(0))
+  var color2 = d3.scaleSequential(d3.interpolateGnBu).domain([data["Total"], 0])
+  var color1 = d3.scaleSequential(d3.interpolateRdPu).domain([data["Total"], 0])
 
   // Set the SVG workspace
   var g = d3.select('div#sunburst')
@@ -249,19 +254,40 @@ function drawSunburst(olympic, country, year){
       .style("fill", function (d) {
         if (d.depth === 1){
           if (d.data.name == "Silver"){
-            return "blue"
+            return "rgb(168,168,168)"
           }
           else if (d.data.name == "Gold"){
-            return "yellow"
+            return "rgb(201,137,16)"
           }
           else if (d.data.name == "Bronze"){
-            return "brown"
+            return "rgb(150, 90, 56)"
           }
         }
-        return color((d.children ? d : d.parent).data.value); })
+        if (d.depth === 2){
+          return color1(Math.floor((Math.random() * data["Total"]) + 0))
+        }
+        if (d.depth === 3){
+          return color2(Math.floor((Math.random() * data["Total"]) + 0))
+        }
+      })
+        // return color((d.children ? d : d.parent).data.value); })
       .on("click", function(d){
         console.log(d)
+        if (d.depth === 2){
+          drawSteamgraph()
+        }
+
       })
+
+      // // call tooltip
+      // var tip = d3.tip()
+      //             .attr('class', 'd3-tip')
+      //             .offset([0, 0])
+      //             .html(function (d){
+      //               console.log(d)
+      //               if (d.depth === 1){
+      //                 return "<strong>"+ d.data.name"</strong><span class='details'>"
+      //               }})
 
 }
 
