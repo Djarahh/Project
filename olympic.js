@@ -51,6 +51,8 @@ function makeSlider(olympic, world){
   gTime.call(sliderTime);
 
   // Returns the value of the selected year
+  dimentions.year = d3.timeFormat("%Y")(sliderTime.value())
+  dimentions.sunburst = "False"
   return d3.timeFormat("%Y")(sliderTime.value())
 
 }
@@ -135,8 +137,12 @@ function drawWorldMap(dataWorld, olympic, year){
             .style("stroke-width",0.3);
         })
         .on("click", function(d){
-
-          drawSunburst(olympic, d.properties.name, year)
+          if (dimentions.sunburst === "False"){
+            drawSunburst(olympic, d.properties.name, dimentions.year)
+          }
+          else{
+            updateSunburst(olympic, d.properties.name, dimentions.year)
+          }
         });
 
   svg.call(tip)
@@ -145,6 +151,7 @@ function drawWorldMap(dataWorld, olympic, year){
 function updateWorldMap(olympic, year){
   // updates the world graph. If a year is selected where there were no olympic
   // games the map turns black.
+  dimentions.year = year
   d3.selectAll(".countries")
     .transition(100)
     .style("fill", "black")
@@ -161,19 +168,24 @@ function updateWorldMap(olympic, year){
         }
       }
     })
+    // .on("click", function (d) {
+    //   drawSunburst(olympic, d.properties.name, year)
+    // });
 
   // Get the tooltip from the function drawWorldMap
   tip = dimentions.tip
   tip.html(function (d) {
-    if (typeof olympic[year][d.properties.name]=== 'undefined'){
+    if (year === "1940" || year === "1916" || year === "1944"){
+      return "<strong>Country: </strong><span class='details'>" + d.properties.name + "<br><span class='details'> No games in "+ year +" due to World War <br></span></span>"
+    }
+    else if (typeof olympic[year][d.properties.name]=== 'undefined'){
       return "<strong>Country: </strong><span class='details'>" + d.properties.name + "<br></span><strong>Total Medals: </strong><span class='details'> No data <br></span>"
     }
     else{
       return "<strong>Country: </strong><span class='details'>" + d.properties.name + "<br></span><strong>Total Medals: </strong><span class='details'>" + olympic[year][d.properties.name]["Total"] + "<br></span>";
     }
   })
-  }
-
+}
 
 function createLegend(c, svg, height, width){
   var colorDomain = [0, 50, 100, 150, 200, 250]
@@ -204,11 +216,19 @@ function createLegend(c, svg, height, width){
         .text(function(d, i){ return legendLabels[i]; });
 }
 
-
 function drawSunburst(olympic, country, year){
   data = olympic[year][country]
+  dimentions.sunburst = "True"
 
-
+  // call tooltip
+  var tip = d3.tip()
+              .attr('class', 'd3-tip')
+              .offset([0, 0])
+              // .html(function (d){
+              //   console.log(d)
+              //   if (d.depth === 1){
+              //     return "<strong>"+ d.data.name"</strong><span class='details'>"
+              //   }})
 
 
   // Define a new variables for the sunburstSVG
@@ -225,6 +245,7 @@ function drawSunburst(olympic, country, year){
             .attr('width', width)
             .attr('height', height)
             .append('g')
+
             .attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')');
 
   // Tool that helps organize data into sunburst (all 360degrees are used)
@@ -248,6 +269,7 @@ function drawSunburst(olympic, country, year){
   g.selectAll('path')
       .data(root.descendants())
       .enter().append('path')
+      .attr("class", "sun")
       .attr("display", function (d) { return d.depth ? null : "none"; })
       .attr("d", arc)
       .style('stroke', '#fff')
@@ -270,28 +292,43 @@ function drawSunburst(olympic, country, year){
           return color2(Math.floor((Math.random() * data["Total"]) + 0))
         }
       })
-        // return color((d.children ? d : d.parent).data.value); })
+
       .on("click", function(d){
         console.log(d)
         if (d.depth === 2){
-          drawSteamgraph()
+          drawSteamgraph(olympic, d.data.name)
         }
-
+      })
+    .append("title")
+      .text(function(d){
+        if (d.depth === 3){
+          return d.data.name + "\n" + (d.data.event);
+        }
+        else if (d.depth === 2) {
+          return d.data.name;
+        }
+        else{
+          return year + "\n" + d.data.name;
+        }
       })
 
-      // // call tooltip
-      // var tip = d3.tip()
-      //             .attr('class', 'd3-tip')
-      //             .offset([0, 0])
-      //             .html(function (d){
-      //               console.log(d)
-      //               if (d.depth === 1){
-      //                 return "<strong>"+ d.data.name"</strong><span class='details'>"
-      //               }})
+
+
+
+
+
+  g.call(tip)
 
 }
 
-function drawSteamgraph(){
+function updateSunburst(olympic, country, year){
+  sun = d3.selectAll(".sun")
+    .transition(100)
+    .style("fill", "black")
+    console.log(sun)
+}
+
+function drawSteamgraph(olympic, sport){
   var n = 20, // number of layers
       m = 200, // number of samples per layer
       stack = d3.stack()

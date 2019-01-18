@@ -19,3 +19,8 @@ A list of dictionaries that each have a name. So there should be a list medal di
 # Day 6 (Tuesday 15-11-2019)
 Today I am trying to format my data into the right format for the sunburst. And I have finally managed to create a dictionary in a list in a list of dictionaries etc. It was then pretty easy to create a sunburst with the data in the right format. However, the colours are not yet applicable. Also, the chart doesn't update yet, it creates a new sunburst with every click on a country. I dont know if I can make the sunburst appear and update afterwards, as it does't exist in the initial page. This is a question I will ask tomorrow. I have figuered out how to give certain colors to a specific catagory.
 Today I also found out that for the years in which there is no data available (such as 1940 due to the world war), there are still errors coming up. This is something that I will fix tomorrow.
+
+# Day 7 (Wednesday 16-11-2019)
+Today I managed to get the on click function (with the right data into the sunburst) working. I also coloured all the layers of the sunburst. I choose these colours (per layer) randomly so there could be differentiated between the different layers more easily. Furthermore, the on click function now also works for the the steam graph with the appropriate data. The tooltip just doesn't work for the sunburst.
+
+# Day 8 (Thursay 17-1-2019)
